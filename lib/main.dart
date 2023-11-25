@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config/router/app_router.dart';
 import 'config/theme/app_theme.dart';
+import 'infrastructure/database/database_helper.dart';
 
-void main() {
+Future<void> main() async {
+  await DataBaseHelper.instance.init();
   runApp(const ProviderScope(child: MainApp()));
 }
 
@@ -17,7 +19,7 @@ class MainApp extends ConsumerWidget {
     // final selectedColor = ref.watch(selectedColorProvider);
 
     return MaterialApp.router(
-      title: 'Flutter Widgets',
+      title: 'Flutter Calendario',
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
       theme: AppTheme(selectedColor: 1).theme(),

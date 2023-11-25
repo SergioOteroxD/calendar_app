@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../dominio/home_param.model.dart';
+import '../../../dominio/entities/home_param.model.dart';
 
 class LoginFullScreen extends StatefulWidget {
-  static const String name = 'home_screen';
+  static const String name = 'login';
   const LoginFullScreen({super.key});
 
   @override
@@ -24,7 +24,7 @@ class _LoginFullScreenState extends State<LoginFullScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Calendar App'),
+          title: const Text('Calendario'),
         ),
         body: Container(
           alignment: Alignment.center,
@@ -39,7 +39,7 @@ class _LoginFullScreenState extends State<LoginFullScreen> {
                   maxLength: 20,
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
-                    labelText: 'Ingresa tu usuario',
+                    labelText: 'Usuario',
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -53,7 +53,7 @@ class _LoginFullScreenState extends State<LoginFullScreen> {
                   controller: passController,
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
-                    labelText: 'Ingresa tu password',
+                    labelText: 'Contraseña',
                   ),
                   keyboardType: TextInputType.text,
                   validator: (value) {
@@ -70,21 +70,21 @@ class _LoginFullScreenState extends State<LoginFullScreen> {
                     if (_formKey.currentState!.validate()) {
                       // If the form is valid, display a snackbar. In the real world,
                       // you'd often call a server or save the information in a database.
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Procesando información')),
-                      );
                       // final HomeParamModel homeParamModel = HomeParamModel(name: formData?._fields['name'], age: formData?.fields['name']);
                       if (emailController.text != 'domingo') {
-                       return showSnackBar(context,'Credenciales incorrectas');
+                       return showSnackBar(context,'Tu correo es incorrecto!');
                       }
                       if (passController.text != 'domingo12345') {
-                       return showSnackBar(context,'Credenciales incorrectas');
+                       return showSnackBar(context,'tu contraseña es incorrecta!');
                       }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Iniciando sesion.')),
+                      );
                       context.push('/home',
                           extra: HomeParamModel(password: passController.text, email: emailController.text));
                     }
                   },
-                  child: const Text('Ingresar'),
+                  child: const Text('Entrar'),
                 ),
                 // Add TextFormFields and ElevatedButton here.
               ],

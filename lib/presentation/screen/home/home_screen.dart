@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../dominio/home_param.model.dart';
-import '../../../pages/basics_example.dart';
-import '../../../pages/complex_example.dart';
-import '../../../pages/events_example.dart';
-import '../../../pages/multi_example.dart';
-import '../../../pages/range_example.dart';
+import '../../../dominio/entities/home_param.model.dart';
+import '../../pages/calendar_page.dart';
+import '../signature/create_signature_screen.dart';
+import '../teacher/create_teacher_screen.dart';
 
 const cards = <Map<String, dynamic>>[
   {'elevation': 0.0, 'label': 'Elevation 0'},
@@ -18,7 +17,7 @@ const cards = <Map<String, dynamic>>[
 
 // ignore: must_be_immutable
 class HomeScreen extends StatelessWidget {
-  static const String name = 'cards_screen';
+  static const String name = 'home';
   HomeParamModel homeParamModel;
   HomeScreen({super.key, required this.homeParamModel});
 
@@ -26,100 +25,9 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Hola ${homeParamModel.email}'),
+          title: Text('Bienvenido ${homeParamModel.email}'),
         ),
         body: StartPage(key: super.key));
-  }
-}
-
-// ignore: must_be_immutable
-class _CardsView extends StatelessWidget {
-  HomeParamModel home;
-  _CardsView({required this.home});
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          ...cards.map(
-            (card) => _CardType1(elevation: card['elevation'], label: home.password),
-          ),
-          ...cards.map(
-            (card) => _CardType2(elevation: card['elevation'], label: card['label']),
-          ),
-          const SizedBox(height: 50),
-        ],
-      ),
-    );
-  }
-}
-
-class _CardType1 extends StatelessWidget {
-  final String label;
-  final double elevation;
-
-  const _CardType1({required this.label, required this.elevation});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: elevation,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                icon: const Icon(Icons.more_vert_outlined),
-                onPressed: () {},
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Text(label),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _CardType2 extends StatelessWidget {
-  final String label;
-  final double elevation;
-
-  const _CardType2({required this.label, required this.elevation});
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
-    return Card(
-      shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(12)), side: BorderSide(color: colors.outline)),
-      elevation: elevation,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                icon: const Icon(Icons.more_vert_outlined),
-                onPressed: () {},
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Text('$label - outline'),
-            )
-          ],
-        ),
-      ),
-    );
   }
 }
 
@@ -134,6 +42,32 @@ class StartPage extends StatefulWidget {
 class _StartPageState extends State<StartPage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: TableEventsExample());
+    return Scaffold(
+        body: Column(
+      children: [
+        const SizedBox(height: 8.0),
+        ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(8),
+          children: [
+            ElevatedButton(
+                onPressed: () {
+                  context.pushNamed(CalendarPages.name);
+                },
+                child: const Text('Calendario')),
+            ElevatedButton(
+                onPressed: () {
+                  context.pushNamed(CreateTeacherScreen.name);
+                },
+                child: const Text('Crear Profesor')),
+            ElevatedButton(
+                onPressed: () {
+                  context.pushNamed(CreateSignatureScreen.name);
+                },
+                child: const Text('Crear Materia'))
+          ],
+        )
+      ],
+    ));
   }
 }

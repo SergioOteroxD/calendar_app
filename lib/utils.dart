@@ -23,14 +23,16 @@ final kEvents = LinkedHashMap<DateTime, List<Event>>(
   equals: isSameDay,
   hashCode: getHashCode,
 )..addAll(_kEventSource);
+
 final _random = Random();
-final listMaterias= ['INVESTIGACION DE OPERACIONES | Gina Montiel','ORGANIZACION DE COMPUTADORES | Domingo Galeano', 'DESARROLLO DE APPS | Domingo Galeano'];
+final listMaterias= ['Gina Montiel INVESTIGACION DE OPERACIONES','Domingo Galeano ORGANIZACION DE COMPUTADORES', 'Domingo Galeano DESARROLLO DE APPS'];
+
 final _kEventSource = { for (var item in List.generate(50, (index) => index)) DateTime.utc(kFirstDay.year, kFirstDay.month, item * 5) : List.generate(
         item % 4 + 1, (index) => Event(listMaterias[_random.nextInt(listMaterias.length)])) }
   ..addAll({
     kToday: [
-      const Event('INVESTIGACION DE OPERACIONES | Gina Montiel'),
-      const Event('INVESTIGACION DE OPERACIONES | Gina Montiel'),
+      const Event('Domingo Galeano ORGANIZACION DE COMPUTADORES'),
+      const Event('Domingo Galeano ORGANIZACION DE COMPUTADORES'),
     ],
   });
 
@@ -48,5 +50,5 @@ List<DateTime> daysInRange(DateTime first, DateTime last) {
 }
 
 final kToday = DateTime.now();
-final kFirstDay = DateTime(kToday.year, kToday.month - 3, kToday.day);
-final kLastDay = DateTime(kToday.year, kToday.month + 3, kToday.day);
+final kFirstDay = DateTime(kToday.year, kToday.month - 2, kToday.day);
+final kLastDay = DateTime(kToday.year, kToday.month + 2, kToday.day);

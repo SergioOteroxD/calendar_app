@@ -1,7 +1,23 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../utils.dart';
+import '../../dominio/share/util_event.dart';
+import '../../infrastructure/model/lesson_join_model.dart';
+import '../../infrastructure/repositories/lesson_repository_impl.dart';
+// import '../../utils.dart';
+
+class CalendarPages extends StatelessWidget {
+  static const name = "calendar";
+  const CalendarPages({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(appBar: AppBar(), body: TableEventsExample(key: super.key));
+  }
+}
 
 class TableEventsExample extends StatefulWidget {
   const TableEventsExample({super.key});
@@ -12,20 +28,41 @@ class TableEventsExample extends StatefulWidget {
 }
 
 class _TableEventsExampleState extends State<TableEventsExample> {
+  final lessonRepo = LessonRepositoryImpl();
+  List<LessonJoinModel> clases = [];
   late final ValueNotifier<List<Event>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
-  RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
-      .toggledOff; // Can be toggled on/off by longpressing a date
+  RangeSelectionMode _rangeSelectionMode =
+      RangeSelectionMode.toggledOff; // Can be toggled on/off by longpressing a date
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
+  final LinkedHashMap<DateTime, List<Event>> reslver = LinkedHashMap();
 
   @override
   void initState() {
     super.initState();
 
     _selectedDay = _focusedDay;
+
+    lessonRepo
+        .queryRaw('''SELECT lessons.dateStart,lessons.dateFinish, teachers.name AS profesor, signatures.name AS materia
+FROM lessons
+JOIN signatures ON lessons.signatureId = signatures.id
+JOIN teachers ON signatures.teacherId = teachers.id;''').then((value) {
+      setState(() {
+        clases = value;
+        final clasesT = clases;
+        for (var element in clasesT) {
+          if (!reslver.containsKey(element.dateStart)) {
+            reslver[element.dateStart] = [];
+          }
+          final obj = clasesT.where((objeto) => objeto.dateStart == element.dateStart).toList();
+          reslver.addAll({element.dateStart: obj.map((e) => Event('${element.materia} ${element.profesor}')).toList()});
+        }
+      });
+    });
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
   }
 
@@ -37,7 +74,13 @@ class _TableEventsExampleState extends State<TableEventsExample> {
 
   List<Event> _getEventsForDay(DateTime day) {
     // Implementation example
-    return kEvents[day] ?? [];
+    print({'reslver': reslver});
+    var dayUnix = dateToUnix(day);
+    if (reslver.containsKey(dayUnix)) {
+      // ignore: avoid_print
+      print({'reslver': reslver[day] ?? []});
+    }
+    return reslver[day] ?? [];
   }
 
   List<Event> _getEventsForRange(DateTime start, DateTime end) {
@@ -134,7 +177,7 @@ class _TableEventsExampleState extends State<TableEventsExample> {
                       ),
                       child: ListTile(
                         onTap: () => print('${value[index]}'),
-                        title: Text('${value[index]}'),
+                        title: Text(value[index].title),
                       ),
                     );
                   },
@@ -142,6 +185,12 @@ class _TableEventsExampleState extends State<TableEventsExample> {
               },
             ),
           ),
+          FloatingActionButton(
+            onPressed: () {
+              context.push('/lesson');
+            },
+            child: const Icon(Icons.plus_one_outlined),
+          )
         ],
       ),
     );
