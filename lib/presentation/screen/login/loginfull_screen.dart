@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../dominio/entities/home_param.model.dart';
+import '../../pages/calendar_page.dart';
 
 class LoginFullScreen extends StatefulWidget {
   static const String name = 'login';
@@ -39,7 +40,7 @@ class _LoginFullScreenState extends State<LoginFullScreen> {
                   maxLength: 20,
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
-                    labelText: 'Usuario',
+                    labelText: 'Correo',
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -71,17 +72,16 @@ class _LoginFullScreenState extends State<LoginFullScreen> {
                       // If the form is valid, display a snackbar. In the real world,
                       // you'd often call a server or save the information in a database.
                       // final HomeParamModel homeParamModel = HomeParamModel(name: formData?._fields['name'], age: formData?.fields['name']);
-                      if (emailController.text != 'domingo') {
-                       return showSnackBar(context,'Tu correo es incorrecto!');
+                      if (emailController.text != 'alejo@gmail.com') {
+                        return showSnackBar(context, 'Tu correo es incorrecto!');
                       }
-                      if (passController.text != 'domingo12345') {
-                       return showSnackBar(context,'tu contraseña es incorrecta!');
+                      if (passController.text != 'gatosfelices') {
+                        return showSnackBar(context, 'tu contraseña es incorrecta!');
                       }
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Iniciando sesion.')),
                       );
-                      context.push('/home',
-                          extra: HomeParamModel(password: passController.text, email: emailController.text));
+                      context.pushNamed(CalendarPages.name);
                     }
                   },
                   child: const Text('Entrar'),

@@ -1,6 +1,5 @@
 import 'package:calendar_app/infrastructure/database/database_helper.dart';
 
-import '../model/lesson_join_model.dart';
 import '../model/lesson_model.dart';
 
 class LessonRepositoryImpl {
@@ -13,7 +12,7 @@ class LessonRepositoryImpl {
 
   Future<int> insert(LessonModel signature) async {
     return await dataBase.insert(LessonModel.nameClass,
-        {'dateFinish': signature.dateFinish, 'dateStart': signature.dateStart, 'signatureId': signature.signatureId});
+        {'dateFinish': signature.dateFinish, 'dateStart': signature.dateStart, 'name': signature.name});
   }
 
   Future<void> update(LessonModel signature) async {
@@ -22,12 +21,5 @@ class LessonRepositoryImpl {
 
   Future<void> delete(LessonModel lessonModel) async {
     await dataBase.delete(LessonModel.nameClass, where: 'id = ?', whereArgs: [lessonModel.id]);
-  }
-
-  Future<List<LessonJoinModel>> queryRaw(String query) async {
-    final data = await dataBase.rawQuery(query);
-    // ignore: avoid_print
-    print({'data': data});
-    return data.map((e) => LessonJoinModel.fromMap(e)).toList();
   }
 }

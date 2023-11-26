@@ -1,7 +1,5 @@
 import 'package:calendar_app/dominio/share/util_event.dart';
 import 'package:calendar_app/infrastructure/model/lesson_model.dart';
-import 'package:calendar_app/infrastructure/model/signature_model.dart';
-import 'package:calendar_app/infrastructure/repositories/signature_repository_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,23 +30,12 @@ class _FormSinatureScreen extends StatefulWidget {
 
 class _FormLessonScreenState extends State<_FormSinatureScreen> {
   final lessonRepo = LessonRepositoryImpl();
-  final signatureRepo = SignatureRepositoryImpl();
   final _formKey = GlobalKey<FormState>();
-  final dateStartController = TextEditingController();
+  final nametController = TextEditingController();
 
-  List<SignatureModel> signatures = [];
-  SignatureModel dropdownValue = SignatureModel(name: '', teacherId: 1);
   @override
   void initState() {
     super.initState();
-    signatureRepo.getAll().then((value) {
-      setState(() {
-        signatures = value;
-        if (value.isNotEmpty) {
-          dropdownValue = value.first;
-        }
-      });
-    });
   }
 
   late DateTime? dateStart;
@@ -67,6 +54,20 @@ class _FormLessonScreenState extends State<_FormSinatureScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          TextFormField(
+            controller: nametController,
+            maxLength: 200,
+            decoration: const InputDecoration(
+              border: UnderlineInputBorder(),
+              labelText: 'Clase',
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Ingresa un valor';
+              }
+              return null;
+            },
+          ),
           ElevatedButton.icon(
             onPressed: () async {
               dateStart = await showDateTimePicker(context: context);
@@ -89,39 +90,25 @@ class _FormLessonScreenState extends State<_FormSinatureScreen> {
                 }
               },
               label: const Text('Hora final'),
-              icon: const Icon(Icons.time_to_leave_outlined)),
-          DropdownButton<SignatureModel>(
-            isExpanded: true,
-            value: dropdownValue,
-            items: signatures.map<DropdownMenuItem<SignatureModel>>((e) {
-              return DropdownMenuItem(value: e, child: Text(e.name));
-            }).toList(),
-            onChanged: (SignatureModel? value) {
-              setState(() {
-                dropdownValue = value!;
-              });
-            },
-          ),
+              icon: const Icon(Icons.calendar_month)),
           ElevatedButton(
             onPressed: () async {
               _formKey.currentState?.save();
               // Validate returns true if the form is valid, or false otherwise.
-              if (signatures.isEmpty) {
-                showSnackBar(context, 'Primero crea asignatura para poder asignar un evento');
-                return;
-              }
-              if (_formKey.currentState!.validate()) {
-                LessonModel lesson = LessonModel(
-                    dateStart: dateToUnix(dateStart!),
-                    dateFinish: dateToUnix(dateFinish!),
-                    signatureId: dropdownValue.id);
-                await lessonRepo.insert(lesson);
 
+              if (_formKey.currentState!.validate()) {
+                int dateStartInt = dateToUnix(dateStart!);
+                int dateFinishInt = dateToUnix(dateFinish!);
+                LessonModel lesson =
+                    LessonModel(dateStart: dateStartInt, dateFinish: dateFinishInt, name: nametController.text);
+                await lessonRepo.insert(lesson);
                 // ignore: use_build_context_synchronously
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Clase creada correctamente.')),
                 );
+
                 setState(() {
+                  // ignore: use_build_context_synchronously
                   context.pop();
                 });
               }

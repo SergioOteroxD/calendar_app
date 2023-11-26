@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../dominio/share/util_event.dart';
-import '../../infrastructure/model/lesson_join_model.dart';
+import '../../infrastructure/model/lesson_model.dart';
 import '../../infrastructure/repositories/lesson_repository_impl.dart';
 // import '../../utils.dart';
 
@@ -29,7 +29,7 @@ class TableEventsExample extends StatefulWidget {
 
 class _TableEventsExampleState extends State<TableEventsExample> {
   final lessonRepo = LessonRepositoryImpl();
-  List<LessonJoinModel> clases = [];
+  List<LessonModel> clases = [];
   late final ValueNotifier<List<Event>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   RangeSelectionMode _rangeSelectionMode =
@@ -46,20 +46,16 @@ class _TableEventsExampleState extends State<TableEventsExample> {
 
     _selectedDay = _focusedDay;
 
-    lessonRepo
-        .queryRaw('''SELECT lessons.dateStart,lessons.dateFinish, teachers.name AS profesor, signatures.name AS materia
-FROM lessons
-JOIN signatures ON lessons.signatureId = signatures.id
-JOIN teachers ON signatures.teacherId = teachers.id;''').then((value) {
+    lessonRepo.getAll().then((value) {
       setState(() {
         clases = value;
         final clasesT = clases;
         for (var element in clasesT) {
-          if (!reslver.containsKey(element.dateStart)) {
-            reslver[element.dateStart] = [];
+          if (!reslver.containsKey(unixToDateTime(element.dateStart))) {
+            reslver[unixToDateTime(element.dateStart)] = [];
           }
           final obj = clasesT.where((objeto) => objeto.dateStart == element.dateStart).toList();
-          reslver.addAll({element.dateStart: obj.map((e) => Event('${element.materia} ${element.profesor}')).toList()});
+          reslver.addAll({unixToDateTime(element.dateStart): obj.map((e) => Event(element.name)).toList()});
         }
       });
     });

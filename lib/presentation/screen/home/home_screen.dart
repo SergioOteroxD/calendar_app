@@ -3,8 +3,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../dominio/entities/home_param.model.dart';
 import '../../pages/calendar_page.dart';
-import '../signature/create_signature_screen.dart';
-import '../teacher/create_teacher_screen.dart';
 
 const cards = <Map<String, dynamic>>[
   {'elevation': 0.0, 'label': 'Elevation 0'},
@@ -55,17 +53,7 @@ class _StartPageState extends State<StartPage> {
                   context.pushNamed(CalendarPages.name);
                 },
                 child: const Text('Calendario')),
-            ElevatedButton(
-                onPressed: () {
-                  context.pushNamed(CreateTeacherScreen.name);
-                },
-                child: const Text('Crear Profesor')),
-            ElevatedButton(
-                onPressed: () {
-                  context.pushNamed(CreateSignatureScreen.name);
-                },
-                child: const Text('Crear Materia'))
-          ],
+           ],
         )
       ],
     ));

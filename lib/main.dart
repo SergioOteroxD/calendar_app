@@ -22,7 +22,7 @@ class MainApp extends ConsumerWidget {
       title: 'Flutter Calendario',
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
-      theme: AppTheme(selectedColor: 1).theme(),
+      theme: AppTheme(selectedColor: 5).theme(),
     );
   }
 }
